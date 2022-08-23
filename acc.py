@@ -1,4 +1,5 @@
 import selenium.common.exceptions
+import urllib3.exceptions
 from selenium import webdriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
@@ -9,6 +10,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 import fng_api
 import time
+import pyautogui
 from threading import Thread
 
 
@@ -16,6 +18,8 @@ class Browser(webdriver.Chrome):
     """webdriver chrome browser to automate web"""
 
     def __init__(self, adp=False):
+        self.REFRESH_COORDS = (105, 65)
+
         opt = Options()
         opt.add_argument("start-maximized")
         opt.add_experimental_option("prefs", {"profile.default_content_setting_values.notifications": 1,
@@ -24,12 +28,18 @@ class Browser(webdriver.Chrome):
         opt.add_experimental_option('useAutomationExtension', False)
         opt.add_argument('--disable-blink-features=AutomationControlled')
         opt.add_experimental_option("excludeSwitches", ["enable-automation"])
+
         if adp:
             opt.add_extension("./adp.crx")
+
         super(Browser, self).__init__(chrome_options=opt, executable_path="./chromedriver.exe")
+
         self.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        self.command_executor.set_timeout(15)  # to throw exception so script wont hang
+
         if adp:
             self.adblock_install()
+
         print(f"initialized browser: {self.__str__()}")
 
     def __str__(self):
@@ -68,7 +78,6 @@ class Browser(webdriver.Chrome):
     def wait_n_click(self, xpath, timeout=15):
         """call wait for element and click if possible"""
         el = self.wait_for_element(xpath, timeout)
-        time.sleep(0.5)
         if el is not None:
             try:
                 el.click()
@@ -77,34 +86,17 @@ class Browser(webdriver.Chrome):
                 print(f"element (\"{xpath}\") not interactable; error")
                 self.wait_n_click(xpath, timeout)
 
-    def safe_click(self, xpath, timeout=15):
-        """click element using selenium click() with background thread watching it"""
-        el = self.wait_for_element(xpath, timeout)  # todo: not needed right now, rewrite wait_n_click to not do this
-        th_click = Thread(target=self.wait_n_click, args=(xpath, 15))
-        th_watch = Thread(target=self.safe_timer)
-
-        th_watch.start()
-        th_click.start()
-
-        th_watch.join()
-        th_click.join()
-
-
-    def safe_timer(self):
-        """timer that refreshes site if nothing has changed after click"""
-        change = False
-        start_dom = self.page_source
-        for i in range(1, 10):
-            if start_dom != self.page_source:
-                change = True
-                print("change detected, click succesful")
-                break
-            time.sleep(1)
-            continue
-        if not change:
-            print("click failed, refreshing site")
-            self.refresh()
-
+    def safe_click(self, xpath, timeout=15): # todo: not used anywhere
+        """call wait_n_click while watching for errors that hang selenium process"""
+        try:
+            self.wait_n_click(xpath, timeout)
+            print("click succesful")
+        except (TimeoutError, urllib3.exceptions.ReadTimeoutError) as e:
+            print("click failed, refreshing and retrying")
+            pyautogui.click(x=self.REFRESH_COORDS[0], y=self.REFRESH_COORDS[1])  # todo: webdriver hanging
+            # due to hanging while waiting for response from its own server,
+            # it is needed to manually click refresh button on chrome
+            self.safe_click(xpath, timeout)
 
     def js_click(self, xpath:str, timeout=15):
         """click element using js"""
@@ -186,10 +178,6 @@ class Account(Browser):
     def verify(self):
         """verify the account"""
         temp_passwd = self.mail.confirm_mail(self.VERIFY_TOPIC)
-        # self.wait_n_click('//i[@class="banicon banicon-settings"]')
-        # time.sleep(1)
-        # self.wait_n_click('//a[text()="Ustawienia konta"]')
-        # time.sleep(2)
         self.get("https://www.bananki.pl/profile/settings/")
         self.wait_n_click('//strong[text()="Zmiana hasła"]')
 
