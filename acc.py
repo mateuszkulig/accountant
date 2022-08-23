@@ -9,7 +9,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 import fng_api
 import time
-import threading
+from threading import Thread
 
 
 class Browser(webdriver.Chrome):
@@ -77,9 +77,40 @@ class Browser(webdriver.Chrome):
                 print(f"element (\"{xpath}\") not interactable; error")
                 self.wait_n_click(xpath, timeout)
 
-    def js_click(self, xpath:str):
+    def safe_click(self, xpath, timeout=15):
+        """click element using selenium click() with background thread watching it"""
+        el = self.wait_for_element(xpath, timeout)  # todo: not needed right now, rewrite wait_n_click to not do this
+        th_click = Thread(target=self.wait_n_click, args=(xpath, 15))
+        th_watch = Thread(target=self.safe_timer)
+
+        th_watch.start()
+        th_click.start()
+
+        th_watch.join()
+        th_click.join()
+
+
+    def safe_timer(self):
+        """timer that refreshes site if nothing has changed after click"""
+        change = False
+        start_dom = self.page_source
+        for i in range(1, 10):
+            if start_dom != self.page_source:
+                change = True
+                print("change detected, click succesful")
+                break
+            time.sleep(1)
+            continue
+        if not change:
+            print("click failed, refreshing site")
+            self.refresh()
+
+
+    def js_click(self, xpath:str, timeout=15):
         """click element using js"""
-        self.execute_script("a = document.evaluate('%s', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; a.click();" % xpath)
+        el = self.wait_for_element(xpath, timeout)
+        if el is not None:
+            self.execute_script("a = document.evaluate('%s', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; a.click();" % xpath)
 
 class Mail(Browser):
     """10minutemail.net control"""

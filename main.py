@@ -90,103 +90,78 @@ def quiz(account):
     account.wait_n_click('//a[text()="Start Quiz"]')
 
     account.wait_n_click('//button[text()="Ray 9"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
     # account.execute_script("a = document.getElementById('nextbutton'); a.click();")
     account.wait_n_click('//button[text()="600,000"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="750"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="$500"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="Glider Store"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="Mini Train Station"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="$250,000"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="Bank rooftop"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="1M Dealership"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="20"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="30"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="20"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="15"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="Posh"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="Interrogator"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="107 mph"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="80"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="52 mph"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="250 mph"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="Uranium Rod"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="4"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="$1,000"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="Volt"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="100"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     account.wait_n_click('//button[text()="$25,000"]')
-    account.wait_for_element('//*[@id="nextbutton"]')
     account.js_click('//*[@id="nextbutton"]')
 
     time.sleep(10)
