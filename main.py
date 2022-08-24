@@ -35,7 +35,8 @@ def register(account):
     account.safe_click('//button[text()="Dalej "]')
     account.safe_click('//button[text()="Super !"]')
 
-    account.execute_script('a = document.querySelector("#instruction > div > form > button"); a.click();')
+    # account.execute_script('a = document.querySelector("#instruction > div > form > button"); a.click();')
+    account.safe_click('//*[@id="instruction"]/div/form/button')
     # account.safe_click('//button[text()="Do dzieła!"]')
     account.safe_click('//span[@class="play"]')
     # kill popup window
