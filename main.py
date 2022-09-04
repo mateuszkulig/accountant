@@ -88,6 +88,10 @@ def quiz(account):
             time.sleep(1)
             continue
     account.safe_click('//a[text()="Continue"]')
+
+    account.execute_cdp_cmd('Network.setBlockedURLs', {"urls": ["cdn.taboola.com", "pagead2.googlesyndication.com"]})
+    account.execute_cdp_cmd('Network.enable', {})
+
     account.safe_click('//a[text()="Start Quiz"]')
 
     account.safe_click('//button[text()="Ray 9"]')
@@ -175,7 +179,7 @@ def quiz(account):
 
 
 if __name__ == "__main__":
-    for i in range(4, 6):
+    for i in range(3, 6):
         m = Mail()
         a = Account(m)
         register(a)

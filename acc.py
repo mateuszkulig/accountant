@@ -81,7 +81,7 @@ class Browser(webdriver.Chrome):
                 pyautogui.click(x=self.REFRESH_COORDS[0], y=self.REFRESH_COORDS[1])  # todo: webdriver hanging
                 # due to hanging while waiting for response from its own server,
                 # it is needed to manually click refresh button on chrome
-                return func(self, args[0])
+                return wrapper(self, *args, **kwargs)
 
         return wrapper
 
