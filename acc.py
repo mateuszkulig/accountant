@@ -11,6 +11,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 import fng_api
 import time
 import pyautogui
+import functools
 from threading import Thread
 
 
@@ -58,12 +59,45 @@ class Browser(webdriver.Chrome):
         self.close()
         self.switch_to.window(self.window_handles[0])  # kill the adblock tab and get back to main tab
 
+    @staticmethod   # this is done so pycharm wont freak out, decorator should be probably moved out of class
+    def safe_interact(func):
+        """decorator for interact functions to handle errors that hang selenium process"""
+        @functools.wraps(func)
+        def wrapper(self, *args, **kwargs):
+            self:Browser
+            try:
+                # use one or two arguments depending on given arguments
+                if len(args) == 1 and len(kwargs) == 1:   # one arg and one kwarg is always funtions with elements
+                    res = func(self, args[0], kwargs["timeout"])
+                elif len(args) == 2:    # last arg fills keyword argument
+                    res = func(self, args[0], args[1])
+                else:  # use only one argument for both self.get and element funtions
+                    res = func(self, args[0])
+                print("action succesful")
+                return res
+
+            except (TimeoutError, urllib3.exceptions.ReadTimeoutError) as e:
+                print("action failed, refreshing and retrying")
+                pyautogui.click(x=self.REFRESH_COORDS[0], y=self.REFRESH_COORDS[1])  # todo: webdriver hanging
+                # due to hanging while waiting for response from its own server,
+                # it is needed to manually click refresh button on chrome
+                return func(self, args[0])
+
+        return wrapper
+
+    @safe_interact
+    def get(self, url:str):
+        """overrides webdrivers get to add safe decorator"""
+        super(Browser, self).get(url)
+
+    @safe_interact
     def hover_mouse(self, xpath, timeout=15):
         """hover mouse at an element; calls wait_for_element and then hovers"""
         el = self.wait_for_element(xpath, timeout)
         if el is not None:
             ActionChains(self).move_to_element(el).perform()
 
+    @safe_interact
     def wait_for_element(self, xpath, timeout=15):
         """wait for element and return it or return none after reaching timeout"""
         try:
@@ -75,6 +109,7 @@ class Browser(webdriver.Chrome):
         print(f"found element \"{xpath}\"")
         return el
 
+    @safe_interact
     def wait_n_click(self, xpath, timeout=15):
         """call wait for element and click if possible"""
         el = self.wait_for_element(xpath, timeout)
@@ -86,7 +121,7 @@ class Browser(webdriver.Chrome):
                 print(f"element (\"{xpath}\") not interactable; error")
                 self.wait_n_click(xpath, timeout)
 
-    def safe_click(self, xpath, timeout=15): # todo: not used anywhere
+    def safe_click(self, xpath, timeout=15):
         """call wait_n_click while watching for errors that hang selenium process"""
         try:
             self.wait_n_click(xpath, timeout)
@@ -98,6 +133,7 @@ class Browser(webdriver.Chrome):
             # it is needed to manually click refresh button on chrome
             self.safe_click(xpath, timeout)
 
+    @safe_interact
     def js_click(self, xpath:str, timeout=15):
         """click element using js"""
         el = self.wait_for_element(xpath, timeout)
