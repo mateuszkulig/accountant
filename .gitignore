@@ -1,1 +1,7 @@
 /adp.crx
+/venv
+/chromedriver.exe
+/database.txt
+/test.txt
+/.idea
+/__pycache__
