@@ -96,7 +96,6 @@ def quiz(account):
 
     account.safe_click('//button[text()="Ray 9"]')
     account.js_click('//*[@id="nextbutton"]')
-    # account.execute_script("a = document.getElementById('nextbutton'); a.click();")
     account.safe_click('//button[text()="600,000"]')
     account.js_click('//*[@id="nextbutton"]')
 
@@ -179,7 +178,7 @@ def quiz(account):
 
 
 if __name__ == "__main__":
-    for i in range(3, 6):
+    for i in range(6):
         m = Mail()
         a = Account(m)
         register(a)
