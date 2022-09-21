@@ -14,7 +14,6 @@ def kill_server():
 def get_ip():
     """get ip addres from ident.me"""
     response = requests.get("https://api.ipify.org")
-    print(response)
     return response.text
 
 def network_reset(dev):
@@ -32,11 +31,13 @@ def network_reset(dev):
             break
         except requests.exceptions.ConnectionError:
             continue
-    # while get_ip() == start_ip:
-    #     time.sleep(1)
 
 def setup():
     """setup adb device"""
+    # run that first while plugged into usb: $ .\adb\adb.exe tcpip 5555
+    kill_server()
+    start_server()
+    powershell(".\\adb\\adb.exe connect 192.168.43.1:5555")
     client = AdbClient(host="127.0.0.1", port=5037) # Default is "127.0.0.1" and 5037
     return client.devices()[0]
 
