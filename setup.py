@@ -8,5 +8,6 @@ setup(
     license='GNU General Public License v3.0',
     author='Mateusz Kulig',
     author_email='mateusz.kulig02@gmail.com',
-    description='Tool written in python to make bot and web accounts easy to create.'
+    description='Tool written in python to make bot and web accounts easy to create.',
+    install_requires=["selenium", "fng_api", "pyautogui", "urllib3"]
 )
