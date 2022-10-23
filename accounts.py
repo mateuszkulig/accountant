@@ -4,7 +4,6 @@ import fng_api
 
 class Bananatic(Browser):
     """bananatic account"""
-
     def __init__(self, mail:Mail):
         super(Bananatic, self).__init__()
         self.TRADELINK = "https://steamcommunity.com/tradeoffer/new/?partner=489030525&token=Px3P0Diw"
@@ -69,3 +68,7 @@ class Bananatic(Browser):
         tradelink = input("enter tradelink")
         linkarea.send_keys(tradelink)
         self.wait_n_click('//input[@value="Wyślij"]')
+
+
+if __name__ == "__main__":
+    print("module loaded as main")
