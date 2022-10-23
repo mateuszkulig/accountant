@@ -244,14 +244,9 @@ class Account(Browser):
 
     def join_roulette(self, place:int):
         """get into operation phoenix case roulette"""
-        # firstly searching for item and hovering to click
-        # self.get("https://www.bananki.pl/sklep/cs-go/?o=4")
-        # self.hover_mouse('//img[@src="https://bananki-15199.kxcdn.com/photos/shop/204.png"]')
-
         # direct lottery link
         self.get("https://www.bananki.pl/lottery/win/?item=csgo-204")
         self.wait_n_click('//b[text()="Sprawdź stół"]')
-        # self.execute_script("$('#popup .info').hide();$('#popup .table').show()")   # instead of clicking run script that click does
         self.wait_for_element('//b[text()="Do stołu dołączyli:"]')
         self.execute_script(
             "$('#place-%d a').click();$('#popup > div').animate({scrollTop: '150px'})" % place) # run script to take a seat with place instead for searching for div
@@ -259,7 +254,6 @@ class Account(Browser):
         linkarea = self.wait_for_element('//textarea[@name="exchange-link"]')
         tradelink = input("enter tradelink")
         linkarea.send_keys(tradelink)
-        # linkarea.send_keys(self.TRADELINK)
         self.wait_n_click('//input[@value="Wyślij"]')
 
 if __name__ == "__main__":
