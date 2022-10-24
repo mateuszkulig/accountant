@@ -119,5 +119,3 @@ class SteamApi(object):
 
 if __name__ == "__main__":
     print("module loaded as main")
-    s = SteamApi()
-    print(s.new_tradelink())
