@@ -66,12 +66,16 @@ class Bananatic(Browser):
             "$('#place-%d a').click();$('#popup > div').animate({scrollTop: '150px'})" % place) # run script to take a seat with place instead for searching for div
         self.wait_n_click('//input[@value="TAK"]')
         linkarea = self.wait_for_element('//textarea[@name="exchange-link"]')
-        tradelink = input("enter tradelink")
+
+        # todo: temporary solution before rewriting steamapi to static class
+        s = SteamApi()
+        tradelink = "https://steamcommunity.com/tradeoffer/new/?partner=1424493025&token=" + s.new_tradelink()
+        del s
+
         linkarea.send_keys(tradelink)
         self.wait_n_click('//input[@value="Wyślij"]')
 
-
-class SteamApi(object):
+class SteamApi(object): # todo: rewrite to static class
     """steam api to change the tradelink"""
     def __init__(self):
         self.cookies = {
