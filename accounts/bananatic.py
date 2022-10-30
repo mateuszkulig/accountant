@@ -1,11 +1,12 @@
 from acc import Browser, Mail
 import time
 import fng_api
+from apis import SteamApi
 
-class Bananatic(Browser):
+class BananaticAcc(Browser):
     """bananatic account"""
     def __init__(self, mail:Mail):
-        super(Bananatic, self).__init__()
+        super(BananaticAcc, self).__init__()
         self.TRADELINK = "https://steamcommunity.com/tradeoffer/new/?partner=489030525&token=Px3P0Diw"
         self.VERIFY_TOPIC = "Potwierdzenie rejestracji - Bananki.pl"
         self.passwd = ""
@@ -61,7 +62,7 @@ class Bananatic(Browser):
         linkarea = self.wait_for_element('//textarea[@name="exchange-link"]')
 
         # todo: temporary solution before rewriting steamapi to static class
-        s = SteamApi()
+        s = apis.SteamApi()
         tradelink = "https://steamcommunity.com/tradeoffer/new/?partner=1424493025&token=" + s.new_tradelink()
         del s
 
