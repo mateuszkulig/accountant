@@ -18,5 +18,3 @@ for any website.
     └── __init__.py
     └── *predefined apis*
 ```
-Both *\_\_init\_\_.py* files contain only imports from predefined 
-files to avoid long filenames in actual package imports.
