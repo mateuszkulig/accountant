@@ -1,7 +1,8 @@
-from acc import Browser, Mail
+from acc import Browser
+from accounts.tenminutemail import Mail
 import time
 import fng_api
-from apis import SteamApi
+from apis.steam import SteamApi
 
 class BananaticAcc(Browser):
     """bananatic account"""
@@ -62,7 +63,7 @@ class BananaticAcc(Browser):
         linkarea = self.wait_for_element('//textarea[@name="exchange-link"]')
 
         # todo: temporary solution before rewriting steamapi to static class
-        s = apis.SteamApi()
+        s = SteamApi()
         tradelink = "https://steamcommunity.com/tradeoffer/new/?partner=1424493025&token=" + s.new_tradelink()
         del s
 
