@@ -28,10 +28,12 @@ driver.execute_script(JS_GET_CLICKED_ELEMENT)
 
 clicked_element:WebElement
 while True:
-    input("enter to continue\n")
-
+    leave = input("enter to continue; type anything to exit\n")
+    if leave:
+        break
     clicked_element = driver.execute_script("return document.a")
     html = clicked_element.get_attribute('outerHTML')
-    # print(f"value of a is: {a.get_attribute('outerHTML')}")
+    attributes = BeautifulSoup(html, 'html.parser').find().attrs
+    pprint(attributes)
 
 driver.quit()
