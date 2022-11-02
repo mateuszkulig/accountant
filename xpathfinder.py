@@ -13,6 +13,10 @@ from pprint import pprint
 
 URL_GAZETA = "https://konto.gazeta.pl/konto/rejestracja.do"
 
+JS_SET_DOCUMENT_A = """
+    document.a = document.getElementsByTagName('html')[0];
+    """
+
 JS_GET_CLICKED_ELEMENT = """
     document.addEventListener('click', function(e) {
     e = e || window.event;
@@ -30,7 +34,7 @@ JS_GET_ARGS_FROM_ELEMENT = """
 
 def combine_xpath(tag_name, attrs:dict) -> str:
     """combine xpath from element tag and attributes"""
-    return f"//{tag_name}".join(f"[@{k}=\"{attrs[k]}\"]" if k != "class" else f"[@{k}=\"{''.join(val for val in attrs[k])}\"]" for k in attrs)
+    return f"//{tag_name}" + "".join(f"[@{k}=\"{attrs[k]}\"]" if k != "class" else f"[@{k}=\"{''.join(val for val in attrs[k])}\"]" for k in attrs)
 
 
 if __name__ == "__main__":
@@ -38,6 +42,7 @@ if __name__ == "__main__":
     driver.maximize_window()
 
     driver.get(URL_GAZETA)
+    driver.execute_script(JS_SET_DOCUMENT_A)
     driver.execute_script(JS_GET_CLICKED_ELEMENT)
 
     clicked_element: WebElement
@@ -52,5 +57,6 @@ if __name__ == "__main__":
         attributes = parsed_element.attrs
         xp = combine_xpath(tag, attributes)
         print(xp)
+        pprint(driver.find_element(by=By.XPATH, value=xp))
 
     driver.quit()
