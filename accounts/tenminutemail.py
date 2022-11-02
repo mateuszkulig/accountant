@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 class Mail(Browser):
     """10minutemail.net control"""
     def __init__(self):
-        super(Mail, self).__init__(adp=True)
+        super(Mail, self).__init__(adblock=True)
         self.mail = ""
         self.get("https://10minutemail.net/")
         self.get_mail()

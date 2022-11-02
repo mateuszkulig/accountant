@@ -16,7 +16,7 @@ import functools
 class Browser(webdriver.Chrome):
     """webdriver chrome browser to automate web"""
 
-    def __init__(self, adp=False):
+    def __init__(self, **kwargs):
         self.REFRESH_COORDS = (105, 65)
 
         opt = Options()
@@ -27,22 +27,37 @@ class Browser(webdriver.Chrome):
         opt.add_experimental_option('useAutomationExtension', False)
         opt.add_argument('--disable-blink-features=AutomationControlled')
         opt.add_experimental_option("excludeSwitches", ["enable-automation"])
-
-        if adp:
-            opt.add_extension("./adp.crx")
+        self.extensions = self.extension_loader(kwargs, opt)
 
         super(Browser, self).__init__(chrome_options=opt, executable_path="./chromedriver.exe")
 
         self.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         self.command_executor.set_timeout(15)  # to throw exception so script wont hang
 
-        if adp:
+        if self.extensions["adblock"]:
             self.adblock_install()
 
         print(f"initialized browser: {self.__str__()}")
 
     def __str__(self):
         return "main browser class"
+
+    @staticmethod
+    def extension_loader(exts:dict, opt) -> dict:
+        """install extensions selected in kwargs"""
+        try:
+            if exts["adblock"]: opt.add_extension("./adp.crx")
+            adblock = True
+        except ValueError:
+            adblock = False
+
+        try:
+            if exts["captcha"]: pass
+            captcha = True
+        except ValueError:
+            captcha = False
+        return {"adblock": adblock, "captcha": captcha}
+
 
     def adblock_install(self):
         """add adblock and close starting site"""
