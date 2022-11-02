@@ -3,6 +3,7 @@ xpathfinder.py
 by Mateusz Kulig
 Script to generate xpaths from clicks on elements in selenium webdriver browser.
 """
+import time
 
 from selenium import webdriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -34,7 +35,7 @@ JS_GET_ARGS_FROM_ELEMENT = """
 
 def combine_xpath(tag_name, attrs:dict) -> str:
     """combine xpath from element tag and attributes"""
-    return f"//{tag_name}" + "".join(f"[@{k}=\"{attrs[k]}\"]" if k != "class" else f"[@{k}=\"{''.join(val for val in attrs[k])}\"]" for k in attrs)
+    return f"//{tag_name}" + "".join(f"[@{k}=\"{attrs[k]}\"]" if k != "class" else f"[@{k}=\"{' '.join(val for val in attrs[k])}\"]" for k in attrs)
 
 
 if __name__ == "__main__":
@@ -46,17 +47,21 @@ if __name__ == "__main__":
     driver.execute_script(JS_GET_CLICKED_ELEMENT)
 
     clicked_element: WebElement
+    last_element = None
     while True:
-        leave = input("enter to continue; type anything to exit\n")
-        if leave:
-            break
+        time.sleep(0.25)
         clicked_element = driver.execute_script("return document.a")
+        if clicked_element == last_element:
+            continue
         html = clicked_element.get_attribute('outerHTML')
         parsed_element = BeautifulSoup(html, 'html.parser').find()
         tag = parsed_element.name
         attributes = parsed_element.attrs
         xp = combine_xpath(tag, attributes)
-        print(xp)
-        pprint(driver.find_element(by=By.XPATH, value=xp))
+
+        print('\n', xp)
+        print(driver.find_element(by=By.XPATH, value=xp).get_attribute("outerHTML")[:100])
+
+        last_element = clicked_element
 
     driver.quit()
