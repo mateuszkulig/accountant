@@ -48,13 +48,13 @@ class Browser(webdriver.Chrome):
         try:
             if exts["adblock"]: opt.add_extension("./adp.crx")
             adblock = True
-        except ValueError:
+        except KeyError:
             adblock = False
 
         try:
-            if exts["captcha"]: pass
+            if exts["captcha"]: opt.add_extension("./nopecha.crx")
             captcha = True
-        except ValueError:
+        except KeyError:
             captcha = False
         return {"adblock": adblock, "captcha": captcha}
 
