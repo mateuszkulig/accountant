@@ -72,6 +72,18 @@ class Browser(webdriver.Chrome):
         self.close()
         self.switch_to.window(self.window_handles[0])  # kill the adblock tab and get back to main tab
 
+    def wait_for_captcha(self):
+        """wait until google recaptcha v2 gets checked"""
+        self.switch_to.frame(self.wait_for_element('//iframe[@title="reCAPTCHA"]'))
+        while True:
+            el_captcha = self.wait_for_element('//*[@id="recaptcha-anchor"]')
+            if el_captcha.get_attribute("aria-checked") == "true":
+                print("captcha done")
+                break
+            print("captcha not done")
+            time.sleep(0.5)
+        self.switch_to.default_content()
+
     @staticmethod   # this is done so pycharm wont freak out, decorator should be probably moved out of class
     def safe_interact(func):
         """decorator for interact functions to handle errors that hang selenium process"""
