@@ -1,10 +1,10 @@
 from acc import Browser
 import random
 
-class GazetaMail(Browser):
+class GazetaMailAcc(Browser):
     """Mail account for poczta.gazeta.pl"""
     def __init__(self, login:str, password:str):
-        super(GazetaMail, self).__init__(captcha=True, adblock=True)
+        super(GazetaMailAcc, self).__init__(captcha=True, adblock=True)
 
         self.LOGIN = login.lower()
         self.PASSWORD = password
