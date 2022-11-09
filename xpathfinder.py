@@ -33,14 +33,10 @@ JS_GET_ARGS_FROM_ELEMENT = """
 
 def combine_xpath(tag_name, attrs:dict) -> str:
     """combine xpath from element tag and attributes"""
-    return f"//{tag_name}" + "".join(f"[@{k}=\"{attrs[k]}\"]" if k != "class" else f"[@{k}=\"{' '.join(val for val in attrs[k])}\"]" for k in attrs)
+    return f"//{tag_name}" + "".join(f"[@{k}=\"{attrs[k]}\"]" if k != "class" else f"[@{k}=\"{' '.join(val for val in attrs[k])}\"]" for k in attrs)    # to cool to hand
 
-
-if __name__ == "__main__":
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-
-    driver.get(URL_GAZETA)
+def start_listening(driver:webdriver.Chrome):
+    """start listening for clicks"""
     driver.execute_script(JS_SET_DOCUMENT_A)
     driver.execute_script(JS_GET_CLICKED_ELEMENT)
 
@@ -62,4 +58,8 @@ if __name__ == "__main__":
 
         last_element = clicked_element
 
-    driver.quit()
+if __name__ == "__main__":
+    print("module loaded as main")
+
+
+
