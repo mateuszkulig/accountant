@@ -10,9 +10,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 
-from pprint import pprint
-
-URL_GAZETA = "https://konto.gazeta.pl/konto/rejestracja.do"
+URL_GAZETA = "https://oauth.gazeta.pl/poczta/auth"
 
 JS_SET_DOCUMENT_A = """
     document.a = document.getElementsByTagName('html')[0];
