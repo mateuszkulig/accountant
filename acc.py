@@ -1,5 +1,3 @@
-import this
-
 import selenium.common.exceptions
 import urllib3.exceptions
 from selenium import webdriver
