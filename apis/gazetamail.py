@@ -21,8 +21,9 @@ class GazetaMailApi(object):
     }
     cookies = {}
 
-    def __init__(self, cookies:dict):
-        self.__class__.cookies = cookies
+    def __init__(self, cookies:list[dict]):
+        for cookie in cookies:
+            self.__class__.cookies[cookie['name']] = cookie['value']
 
     def get_messages(self) -> list:
         """get and parse all of recieved emails"""
@@ -32,7 +33,7 @@ class GazetaMailApi(object):
         for mess in json_response:
             mess_id = mess["mid"]
             sender = mess["from"]
-            date = mess["recieved_date"]
+            date = mess["received_date"]
             subject = mess["subject"]
             messages.append(RecievedEmail(mess_id, sender, date, subject))
         return messages
@@ -45,12 +46,13 @@ class RecievedEmail(object):
         self.sender = sender
         self.date = date
         self.subject = subject
-        self.content = self.get_message_html()
+        self.content = self.get_message_content()
 
-    def get_message_html(self):
+    def get_message_content(self):
         """get message html content"""
-        return requests.get(f'https://poczta.gazeta.pl/webmailapi/mail/{self.id}', cookies=GazetaMailApi.cookies, headers=GazetaMailApi.headers).text
-
-
-
-
+        response = requests.get(f'https://poczta.gazeta.pl/webmailapi/mail/{self.id}', cookies=GazetaMailApi.cookies, headers=GazetaMailApi.headers).text
+        json_response = json.loads(response)
+        if json_response["html"] != "":
+            return json_response["html"]
+        else:
+            return json_response["text"]
