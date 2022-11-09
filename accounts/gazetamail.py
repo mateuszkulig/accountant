@@ -4,10 +4,11 @@ import random
 class GazetaMail(Browser):
     """Mail account for poczta.gazeta.pl"""
     def __init__(self, login:str, password:str):
-        super(GazetaMail, self).__init__(captcha=True)
+        super(GazetaMail, self).__init__(captcha=True, adblock=True)
 
         self.LOGIN = login.lower()
         self.PASSWORD = password
+        self.MAIL = f"{self.LOGIN}@gazeta.pl"
 
     def register(self):
         """register an account"""
@@ -39,6 +40,21 @@ class GazetaMail(Browser):
         self.wait_n_click('//input[@type="submit"][@class="accountRegister__btn"][@value="Zakładam konto"]')
 
         self.get("about:blank")
+
+    def log_in(self):
+        """log into email account"""
+        self.get("https://oauth.gazeta.pl/poczta/auth")
+
+        self.wait_n_click('//button[@id="onetrust-accept-btn-handler"]')    # cookies popup
+
+        el_input_login = self.wait_for_element('//input[@type="text"][@name="username"][@class="t"][@id="username"][@data-lowercase="true"][@value=""]')
+        el_input_password = self.wait_for_element('//input[@type="password"][@name="password"][@class="t"][@id="password"]')
+
+        el_input_login.send_keys(self.LOGIN)
+        el_input_password.send_keys(self.PASSWORD)
+
+        # doubleclick is required for gazeta to understand input
+        for _ in range(2): self.wait_n_click('//input[@type="submit"][@id="mainSubmitLink"][@value="Zaloguj się"][@class="submit-button"]')    # log in button
 
     @staticmethod
     def generate_date():
