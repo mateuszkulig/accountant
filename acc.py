@@ -1,3 +1,5 @@
+import this
+
 import selenium.common.exceptions
 import urllib3.exceptions
 from selenium import webdriver
@@ -37,6 +39,7 @@ class Browser(webdriver.Chrome):
         if self.extensions["adblock"]:
             self.adblock_install()
 
+        self.blocked_urls = []
         print(f"initialized browser: {self.__str__()}")
 
     def __str__(self):
@@ -71,6 +74,12 @@ class Browser(webdriver.Chrome):
         self.wait_for_element('//body[@class="page-loaded"]', 30)
         self.close()
         self.switch_to.window(self.window_handles[0])  # kill the adblock tab and get back to main tab
+
+    def add_blocked_url(self, url:str):
+        """block requests from specific url"""
+        self.blocked_urls.append(url)
+        self.execute_cdp_cmd('Network.setBlockedURLs', {"urls": self.blocked_urls})
+        self.execute_cdp_cmd('Network.enable', {})
 
     def wait_for_captcha(self):
         """wait until google recaptcha v2 gets checked"""
