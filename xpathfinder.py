@@ -5,6 +5,7 @@ Script to generate xpaths from clicks on elements in selenium webdriver browser.
 """
 import time
 
+import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
@@ -37,14 +38,18 @@ def combine_xpath(tag_name, attrs:dict) -> str:
 
 def start_listening(driver:webdriver.Chrome):
     """start listening for clicks"""
-    driver.execute_script(JS_SET_DOCUMENT_A)
     driver.execute_script(JS_GET_CLICKED_ELEMENT)
 
     clicked_element: WebElement
     last_element = None
     while True:
         time.sleep(0.25)
-        clicked_element = driver.execute_script("return document.a")
+        try:
+            clicked_element = driver.execute_script("return document.a")
+        except (selenium.common.exceptions.StaleElementReferenceException, AttributeError):
+            driver.execute_script(JS_SET_DOCUMENT_A)
+            continue
+
         if clicked_element == last_element:
             continue
         html = clicked_element.get_attribute('outerHTML')
