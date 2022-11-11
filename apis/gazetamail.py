@@ -4,7 +4,7 @@ import json
 
 class GazetaMailApi(object):
     """gazeta.pl mail api"""
-    headers = {
+    HEADERS = {
         'authority': 'poczta.gazeta.pl',
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'accept-language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7,de;q=0.6',
@@ -28,7 +28,7 @@ class GazetaMailApi(object):
     def get_messages(self) -> list:
         """get and parse all of recieved emails"""
         messages = []
-        response = requests.get('https://poczta.gazeta.pl/webmailapi/mail/', cookies=self.cookies, headers=self.headers)
+        response = requests.get('https://poczta.gazeta.pl/webmailapi/mail/', cookies=self.cookies, headers=self.HEADERS)
         json_response = json.loads(response.text)
         for mess in json_response:
             mess_id = mess["mid"]
@@ -37,6 +37,11 @@ class GazetaMailApi(object):
             subject = mess["subject"]
             messages.append(RecievedEmail(mess_id, sender, date, subject))
         return messages
+
+    def find_message_by_topic(self, topic:str):
+        """return recievedEmail object that matches subject propety with topic"""
+        for mail in self.get_messages():
+            if mail.subject == topic: return mail
 
 
 class RecievedEmail(object):
@@ -50,7 +55,7 @@ class RecievedEmail(object):
 
     def get_message_content(self):
         """get message html content"""
-        response = requests.get(f'https://poczta.gazeta.pl/webmailapi/mail/{self.id}', cookies=GazetaMailApi.cookies, headers=GazetaMailApi.headers).text
+        response = requests.get(f'https://poczta.gazeta.pl/webmailapi/mail/{self.id}', cookies=GazetaMailApi.cookies, headers=GazetaMailApi.HEADERS).text
         json_response = json.loads(response)
         if json_response["html"] != "":
             return json_response["html"]
