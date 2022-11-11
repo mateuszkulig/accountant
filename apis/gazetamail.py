@@ -1,5 +1,6 @@
 import requests
 import json
+from bs4 import BeautifulSoup
 
 
 class GazetaMailApi(object):
@@ -51,13 +52,19 @@ class RecievedEmail(object):
         self.sender = sender
         self.date = date
         self.subject = subject
+        self.content_type = ""
         self.content = self.get_message_content()
+
 
     def get_message_content(self):
         """get message html content"""
         response = requests.get(f'https://poczta.gazeta.pl/webmailapi/mail/{self.id}', cookies=GazetaMailApi.cookies, headers=GazetaMailApi.HEADERS).text
         json_response = json.loads(response)
         if json_response["html"] != "":
-            return json_response["html"]
+            self.content_type = "html"
         else:
-            return json_response["text"]
+            self.content_type = "text"
+        return json_response[self.content_type]
+
+    def get_closest_href(self, pattern:str):
+        """parse the content and search for best match for link"""
