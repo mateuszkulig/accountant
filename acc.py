@@ -37,6 +37,7 @@ class Browser(webdriver.Chrome):
         if self.extensions["adblock"]:
             self.adblock_install()
 
+        self.blocked_urls = []
         print(f"initialized browser: {self.__str__()}")
 
     def __str__(self):
@@ -71,6 +72,24 @@ class Browser(webdriver.Chrome):
         self.wait_for_element('//body[@class="page-loaded"]', 30)
         self.close()
         self.switch_to.window(self.window_handles[0])  # kill the adblock tab and get back to main tab
+
+    def add_blocked_url(self, url:str):
+        """block requests from specific url"""
+        self.blocked_urls.append(url)
+        self.execute_cdp_cmd('Network.setBlockedURLs', {"urls": self.blocked_urls})
+        self.execute_cdp_cmd('Network.enable', {})
+
+    def wait_for_captcha(self):
+        """wait until google recaptcha v2 gets checked"""
+        self.switch_to.frame(self.wait_for_element('//iframe[@title="reCAPTCHA"]'))
+        while True:
+            el_captcha = self.wait_for_element('//*[@id="recaptcha-anchor"]')
+            if el_captcha.get_attribute("aria-checked") == "true":
+                print("captcha done")
+                break
+            print("captcha not done")
+            time.sleep(0.5)
+        self.switch_to.default_content()
 
     @staticmethod   # this is done so pycharm wont freak out, decorator should be probably moved out of class
     def safe_interact(func):

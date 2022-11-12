@@ -5,14 +5,13 @@ Script to generate xpaths from clicks on elements in selenium webdriver browser.
 """
 import time
 
+import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 
-from pprint import pprint
-
-URL_GAZETA = "https://konto.gazeta.pl/konto/rejestracja.do"
+URL_GAZETA = "https://oauth.gazeta.pl/poczta/auth"
 
 JS_SET_DOCUMENT_A = """
     document.a = document.getElementsByTagName('html')[0];
@@ -35,22 +34,22 @@ JS_GET_ARGS_FROM_ELEMENT = """
 
 def combine_xpath(tag_name, attrs:dict) -> str:
     """combine xpath from element tag and attributes"""
-    return f"//{tag_name}" + "".join(f"[@{k}=\"{attrs[k]}\"]" if k != "class" else f"[@{k}=\"{' '.join(val for val in attrs[k])}\"]" for k in attrs)
+    return f"//{tag_name}" + "".join(f"[@{k}=\"{attrs[k]}\"]" if k != "class" else f"[@{k}=\"{' '.join(val for val in attrs[k])}\"]" for k in attrs)    # to cool to hand
 
-
-if __name__ == "__main__":
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-
-    driver.get(URL_GAZETA)
-    driver.execute_script(JS_SET_DOCUMENT_A)
+def start_listening(driver:webdriver.Chrome):
+    """start listening for clicks"""
     driver.execute_script(JS_GET_CLICKED_ELEMENT)
 
     clicked_element: WebElement
     last_element = None
     while True:
         time.sleep(0.25)
-        clicked_element = driver.execute_script("return document.a")
+        try:
+            clicked_element = driver.execute_script("return document.a")
+        except (selenium.common.exceptions.StaleElementReferenceException, AttributeError):
+            driver.execute_script(JS_SET_DOCUMENT_A)
+            continue
+
         if clicked_element == last_element:
             continue
         html = clicked_element.get_attribute('outerHTML')
@@ -64,4 +63,8 @@ if __name__ == "__main__":
 
         last_element = clicked_element
 
-    driver.quit()
+if __name__ == "__main__":
+    print("module loaded as main")
+
+
+
