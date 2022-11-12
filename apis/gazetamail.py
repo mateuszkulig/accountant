@@ -56,7 +56,7 @@ class RecievedEmail(object):
         self.content = self.get_message_content()
 
 
-    def get_message_content(self):
+    def get_message_content(self) -> str:
         """get message html content"""
         response = requests.get(f'https://poczta.gazeta.pl/webmailapi/mail/{self.id}', cookies=GazetaMailApi.cookies, headers=GazetaMailApi.HEADERS).text
         json_response = json.loads(response)
@@ -66,5 +66,15 @@ class RecievedEmail(object):
             self.content_type = "text"
         return json_response[self.content_type]
 
-    def get_closest_href(self, pattern:str):
+    def get_closest_href(self, pattern:str) -> str:
         """parse the content and search for best match for link"""
+        if self.content_type == "text":
+            start = self.content.find(pattern)
+            end = self.content[start:].find(" ")
+            return self.content[start:start+end]
+        else:
+            soup = BeautifulSoup(self.content, "html.parser")
+            for a in soup.find_all('a', href=True):
+                if a['href'][:len(pattern)] == pattern:
+                    return a["href"]
+            return ""
