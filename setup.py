@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='accountant',
     version='0.1',
-    packages=['accounts', 'apis'],
+    packages=['accountant', 'accounts', 'apis'],
     url='https://github.com/mateuszkulig/accountant',
     license='GNU General Public License v3.0',
     author='Mateusz Kulig',
