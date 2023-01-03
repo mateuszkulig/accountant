@@ -173,6 +173,12 @@ class Browser(webdriver.Chrome):
         if el is not None:
             self.execute_script("a = document.evaluate('%s', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; a.click();" % xpath)
 
+    @safe_interact
+    def delete_element(self, xpath:str, timeout=15):
+        """delete element from dom"""
+        el = self.wait_for_element(xpath, timeout)
+        self.execute_script("a = document.evaluate('%s', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; a.remove();" % xpath)
+
 
 if __name__ == "__main__":
     print("module loaded as main")
