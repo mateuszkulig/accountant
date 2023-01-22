@@ -31,7 +31,7 @@ class Browser(webdriver.Chrome):
 
         super(Browser, self).__init__(chrome_options=opt, executable_path="./chromedriver.exe")
 
-        self.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        # self.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         self.command_executor.set_timeout(15)  # to throw exception so script wont hang
 
         if self.extensions["adblock"]:
