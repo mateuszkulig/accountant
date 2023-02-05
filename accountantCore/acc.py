@@ -31,7 +31,7 @@ class Browser(webdriver.Chrome):
 
         super(Browser, self).__init__(chrome_options=opt, executable_path="../chromedriver.exe")
 
-        self.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        # self.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         self.command_executor.set_timeout(15)  # to throw exception so script wont hang
 
         if self.extensions["adblock"]:
@@ -172,6 +172,12 @@ class Browser(webdriver.Chrome):
         el = self.wait_for_element(xpath, timeout)
         if el is not None:
             self.execute_script("a = document.evaluate('%s', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; a.click();" % xpath)
+
+    @safe_interact
+    def delete_element(self, xpath:str, timeout=15):
+        """delete element from dom"""
+        el = self.wait_for_element(xpath, timeout)
+        self.execute_script("a = document.evaluate('%s', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue; a.remove();" % xpath)
 
 
 if __name__ == "__main__":
