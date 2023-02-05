@@ -68,6 +68,19 @@ class BananaticAcc(Browser):
         self.safe_click('//*[@id="onesignal-bell-launcher"]')
         time.sleep(10)  # wait for bell to activate
 
+    # this function is not really working that great with 10minmail temporary mail, it is meant to be used with
+    # relogable mail that you can retrieve information from after initially creating it
+    def sign_in(self):
+        """sign in to an account using parameter email and password"""
+        self.get("https://www.bananki.pl/")
+        self.wait_n_click("//*[@id='login-btn']")
+        ipt_login = self.wait_for_element("//input[@name='user_mail']")
+        ipt_passwd = self.wait_for_element("//input[@name='user_pass']")
+        ipt_login.send_keys(self.mail.mail)
+        ipt_passwd.send_keys(self.passwd)
+        self.wait_n_click("//input[@value='Zaloguj się']")
+
+
     def get_identity(self):
         """get the identity of acc"""
         ident = fng_api.getIdentity()
