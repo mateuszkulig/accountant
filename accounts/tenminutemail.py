@@ -1,4 +1,4 @@
-from acc import Browser
+from accountantCore.acc import Browser
 import time
 from selenium.webdriver.common.by import By
 

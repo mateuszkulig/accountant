@@ -1,4 +1,4 @@
-from acc import Browser
+from accountantCore.acc import Browser
 from accounts.tenminutemail import Mail
 import time
 import fng_api
