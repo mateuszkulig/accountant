@@ -8,7 +8,6 @@ class BananaticAcc(Browser):
     """bananatic account"""
     def __init__(self, mail:Mail):
         super(BananaticAcc, self).__init__()
-        self.TRADELINK = "https://steamcommunity.com/tradeoffer/new/?partner=489030525&token=Px3P0Diw"
         self.VERIFY_TOPIC = "Potwierdzenie rejestracji - Bananki.pl"
         self.passwd = ""
         self.login = ""
@@ -17,6 +16,57 @@ class BananaticAcc(Browser):
 
     def __str__(self):
         return "account browser"
+
+    def register(self):
+        self.get("https://www.bananki.pl/#register")
+        ipt_em1 = self.wait_for_element('//*[@id="form-register"]/input[1]')
+        ipt_em2 = self.wait_for_element('//*[@id="form-register"]/input[2]')
+        ipt_em1.send_keys(self.mail.mail)
+        ipt_em2.send_keys(self.mail.mail)
+        self.safe_click('//*[@id="form-register"]/input[3]')
+
+        # wait for adblock
+        # self.wait_for_element('//*[@id="abm"]')
+        # self.execute_script("$('#abm').remove()")
+
+        self.safe_click('//label[@class="sex male"]')
+        ipt_login = self.wait_for_element('//input[@name="user_name"]')
+        ipt_login.send_keys(self.login)
+        self.safe_click('//button[@class="btn submit"]')
+        self.safe_click('//a[@id="accept-cookies-checkbox"]')
+
+        self.safe_click('//button[text()="Ruszamy! "]')
+        self.safe_click('//button[text()="Dalej "]')
+        # self.safe_click('//span[text()="1x Losowy klucz Steam"]')
+        self.wait_for_element('//*[@id="skip"]')
+        self.js_click('//*[@id="skip"]')
+        # self.execute_script("a = document.getElementById('skip'); a.click()")
+        # self.safe_click('//*[@id="skip"]')
+        self.safe_click('//button[text()="Super !"]')
+
+        self.safe_click('//label[text()="Chcę otrzymywać informacje o nowościach i promocjach od Sedoc LLC."]')
+        self.safe_click('//label[text()="Chcę otrzymywać powiadomienia"]')
+        self.safe_click('//button[text()="Dalej "]')
+        self.safe_click('//button[text()="Super !"]')
+
+        # self.execute_script('a = document.querySelector("#instruction > div > form > button"); a.click();')
+        self.safe_click('//*[@id="instruction"]/div/form/button')
+        # self.safe_click('//button[text()="Do dzieła!"]')
+        self.safe_click('//span[@class="play"]')
+        # kill popup window
+        for _ in range(5):
+            try:
+                self.switch_to.window(self.window_handles[1])
+                break
+            except IndexError:
+                time.sleep(1)
+                continue
+        self.close()
+        self.switch_to.window(self.window_handles[0])
+
+        time.sleep(4)
+        self.safe_click('//*[@id="onesignal-bell-launcher"]')
+        time.sleep(10)  # wait for bell to activate
 
     def get_identity(self):
         """get the identity of acc"""
